@@ -49,14 +49,14 @@ def _atomic_write_file(path: Path, write: Callable[[Path], None]) -> None: # Def
 def get_data_dir(base_dir: str | Path | None = None) -> Path: # Define a function to locate or initialize the application data storage folder
     """Return the data directory and create it if needed.
 
-    If ``base_dir`` is omitted, uses the ``LEDGERLOGIC_DATA_DIR`` environment
-    variable when set; otherwise ``./ledgerlogic_data`` under the current
-    working directory.
+    If ``base_dir`` is omitted, uses ``RECONCILER_DATA_DIR`` when set, then
+    falls back to ``LEDGERLOGIC_DATA_DIR`` for backward compatibility;
+    otherwise ``./ledgerlogic_data`` under the current working directory.
     """ # Explain the hierarchy used to determine where data is stored
     if base_dir is not None: # Check if a specific directory was passed as an argument
         root = Path(base_dir) # Use the provided path if available
     else: # Fall back to environment variables or defaults if no path was provided
-        env = (os.environ.get("LEDGERLOGIC_DATA_DIR") or "").strip() # Retrieve a custom path from the OS environment variables
+        env = (os.environ.get("RECONCILER_DATA_DIR") or os.environ.get("LEDGERLOGIC_DATA_DIR") or "").strip() # Retrieve a custom path from supported environment variables
         if env: # If the environment variable was found and is not empty
             root = Path(env).expanduser() # Resolve the path and handle shorthand like the '~' user directory
         else: # If no custom path is set anywhere
